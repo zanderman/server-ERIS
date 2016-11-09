@@ -8,7 +8,7 @@ def Nav():
 		"header":
 			[
 				["Home","/"],
-				["Incidents","/incidents"]
+				["Incidents","/incidents"],
 				["Settings","/settings"]
 			] 
 		}
