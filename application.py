@@ -1,7 +1,7 @@
 
 # Modules
-from flask 	import Flask, render_template, request
-from nav 	import Nav
+from flask 			import Flask, render_template, request
+from models.nav 	import Nav
 
 # Setup Flask
 app = Flask(__name__)
