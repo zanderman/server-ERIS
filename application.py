@@ -15,7 +15,7 @@ def home():
 	"""
 	Render the homepage with navigation bar items.
 	"""
-	return render_template('home.html', NAV=NAV["header"])
+	return render_template('home.html', NAV=nav["header"])
 
 if __name__=='__main__':
 
