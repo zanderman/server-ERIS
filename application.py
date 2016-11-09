@@ -1,14 +1,21 @@
 
 # Modules
-from flask import Flask, render_template, request
+from flask 	import Flask, render_template, request
+from nav 	import Nav
 
 # Setup Flask
 app = Flask(__name__)
 app.debug = True
 
+# Global variables
+nav = Nav() 	# Dictionary of navigation bar items.
+
 @app.route('/')
-def index():
-	return "Hello World"
+def home():
+	"""
+	Render the homepage with navigation bar items.
+	"""
+	return render_template('home.html', NAV=NAV["header"])
 
 if __name__=='__main__':
 
