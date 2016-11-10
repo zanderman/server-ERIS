@@ -3,4 +3,5 @@
 .DS_Store
 
 ### Python ###
-*.pyc # Compiled python files
+*.pyc 	# Compiled python files
+config 	# Configuration files
