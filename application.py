@@ -6,18 +6,22 @@ from models.nav 			import Nav
 from models.incident 		import Incident
 from boto.dynamodb2.fields 	import HashKey
 from boto.dynamodb2.table 	import Table
+from configparser         	import ConfigParser
 import os
+import sys
 
 # Set environment variables.
-os.environ["AWS_ACCESS_KEY_ID"] = ""
-os.environ["AWS_SECRET_ACCESS_KEY"] = ""
+config = ConfigParser()
+config.read(sys.argv[1])
+os.environ["AWS_ACCESS_KEY_ID"] = config.get("dynamodb","aws_access_key_id")
+os.environ["AWS_SECRET_ACCESS_KEY"] = config.get("dynamodb","aws_secret_access_key")
 
 # Setup Flask
 app = Flask(__name__)
 app.debug = True
 app.config['DYNAMO_TABLES'] = [
-    Table('emergencyresponderin-mobilehub-146580548-User_Data', schema=[HashKey('userId')]),
-    Table('emergencyresponderin-mobilehub-146580548-Scenes', schema=[HashKey('sceneId')]),
+    Table(config.get("dynamodb","aws_table_users"), schema=[HashKey(config.get("dynamodb","aws_users_hashkey"))]),
+    Table(config.get("dynamodb","aws_table_incidents"), schema=[HashKey(config.get("dynamodb","aws_incidents_hashkey"))]),
 ]
 
 # Global variables
@@ -45,7 +49,7 @@ def incidents():
 		if request.form['submit'].lower() == "refresh":
 			INCIDENTS.append(Incident("id","hello there","address","latitude","longitude","time","Incident #1",None))
 			INCIDENTS.append(Incident("id","oh goodness!","address","latitude","longitude","time","Incident #2",None))
-			dynamo.tables['emergencyresponderin-mobilehub-146580548-Scenes'].put_item(
+			dynamo.tables[config.get("dynamodb","aws_table_incidents")].put_item(
 				data={
 				"sceneId" : "1234",
 				"address" : "42 Wallaby Way, Sydney",
