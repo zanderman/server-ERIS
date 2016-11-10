@@ -9,8 +9,8 @@ from boto.dynamodb2.table 	import Table
 import os
 
 # Set environment variables.
-os.environ["AWS_ACCESS_KEY_ID"] = "AKIAJPSBNOVF7M4MZULA"
-os.environ["AWS_SECRET_ACCESS_KEY"] = "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"
+os.environ["AWS_ACCESS_KEY_ID"] = ""
+os.environ["AWS_SECRET_ACCESS_KEY"] = ""
 
 # Setup Flask
 app = Flask(__name__)
