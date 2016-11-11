@@ -50,11 +50,9 @@
 							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 							</div>
 							<div class="alert alert-danger col-xs-4 col-sm-4 col-md-4 col-lg-4">
-								<ul>
-									{% for message in messages %}
-										<li>{{ message }}</li>
-									{% endfor %}
-								</ul>
+								{% for message in messages %}
+									<p>{{ message }}</p>
+								{% endfor %}
 							</div>
 							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 							</div>
@@ -69,7 +67,7 @@
 			<div class="row">
 
 				<!-- LEFT -->
-				<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+				<div class="col-xs-8 col-sm-8 col-md-6 col-lg-6">
 
 					<h3 class="text-center">Create New</h3>
 
@@ -105,17 +103,17 @@
 
 								<!-- FIRE -->
 								<label class="form-check-inline">
-									<input name="check" class="form-check-input text-warning" type="checkbox" id="checkboxFire" value="FIRE"> Fire
+									<input name="check-organization" class="form-check-input text-warning" type="checkbox" id="checkboxFire" value="FIRE"> Fire
 								</label>
 
 								<!-- EMS -->
 								<label class="form-check-inline">
-									<input name="check" class="form-check-input" type="checkbox" id="checkboxEms" value="EMS"> EMS
+									<input name="check-organization" class="form-check-input" type="checkbox" id="checkboxEms" value="EMS"> EMS
 								</label>
 
 								<!-- POLICE -->
 								<label class="form-check-inline">
-									<input name="check" class="form-check-input" type="checkbox" id="checkboxPolice" value="POLICE"> Police
+									<input name="check-organization" class="form-check-input" type="checkbox" id="checkboxPolice" value="POLICE"> Police
 								</label>
 						  	</div>
 						</div>
@@ -125,6 +123,24 @@
 							<label for="text-input-description" class="col-xs-2 col-form-label">Description</label>
 							<div class="col-xs-10">
 								<textarea name="data-description" class="form-control" id="text-input-description" rows="3" placeholder="Detailed description of incident"></textarea>
+						  	</div>
+						</div>
+
+						<!-- Status -->
+						<div class="form-group row">
+							<label for="button-input-status" class="col-xs-2 col-form-label">Status</label>
+							<div class="col-xs-10" id="button-input-status" >
+
+								<!-- Active -->
+								<label class="form-check-inline">
+									<input name="check-status" class="form-check-input text-warning" type="radio" id="checkboxActive" value="True"> Active
+								</label>
+
+								<!-- Inactive -->
+								<label class="form-check-inline">
+									{# Note that empty string will evaluate to False when converting to boolean #}
+									<input name="check-status" class="form-check-input" type="radio" id="checkboxInactive" value=""> Inactive
+								</label>
 						  	</div>
 						</div>
 
@@ -165,7 +181,7 @@
 				</div>
 
 				<!-- RIGHT -->
-				<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+				<div class="col-xs-4 col-sm-4 col-md-6 col-lg-6">
 
 					<h3 class="text-center">Available</h3>
 
@@ -178,16 +194,42 @@
 
 					<h6 class="text-center">All available incidents will appear here</h6>
 
-					<!-- List of Incidents -->
-					<div class="list-group">
+					<div style="height: 550px;overflow: auto;">
+
+						{# List of Incidents #}
 						{% for incident in INCIDENTS %}
-						<a href="#" class="list-group-item">
-							<h4 class="list-group-item-heading">{{incident.title}}</h4>
-							<p class="list-group-item-text">{{incident.description}}</p>
-						</a>
+
+							{# Active incident #}
+							{% if incident.active %}
+								<div class="panel panel-success">
+
+							{# Inactive incident #}
+							{% else %}
+								<div class="panel panel-danger">
+
+							{% endif %}
+									<div class="panel-heading">
+										<h4 class="list-group-item-heading">{{incident.title}}</h4>
+									</div>
+									<div class="panel-body">
+										<ul class="list-inline">
+											{% for org in incident.organizations %}
+												{% if org.lower() == "fire" %}
+													<img src="{{ url_for('static', filename='images/ic_fire.png') }}" class="img-fluid" alt="Responsive image" style="height:18px;width:15px">
+												{% elif org.lower() == "ems" %}
+													<img src="{{ url_for('static', filename='images/ic_ems.png') }}" class="img-fluid" alt="Responsive image" style="height:20px;width:20px">
+												{% elif org.lower() == "police" %}
+													<img src="{{ url_for('static', filename='images/ic_police.png') }}" class="img-fluid" alt="Responsive image" style="height:17px;width:17px">
+												{% endif %}
+											{% endfor %} 
+										</ul>
+										<p class="list-group-item-text">{{incident.address}} <a href="http://maps.google.com/maps?z=12&t=m&q=loc:{{incident.latitude}}+{{incident.longitude}}" target="_blank">({{incident.latitude}}, {{incident.longitude}})</a></p>
+										<p></p>
+										<p class="list-group-item-text">{{incident.description}}</p>
+									</div>
+								</div>
 						{% endfor %}
 					</div>
-
 				</div>
 			</div>
 
