@@ -1,0 +1,240 @@
+
+{% extends "index.html" %}
+
+{% block body %}
+	<!-- Main Body -->
+	<body class = "body">
+
+		<nav class="navbar navbar-default" role="navigation">
+			<div class="container-fluid">
+
+			<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#">ERIS</a>
+				</div>
+
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="navbar">
+					<ul class="nav navbar-nav">
+
+						<!-- Create header items for desired navigation items. -->
+						{% for title,link in NAV %}
+							{% if title.lower() == "incidents" %}
+								<li role="presentation" class="active">
+									<a href={{link}}>{{title}}</a>
+								</li>
+							{% else %}
+								<li role="presentation" class="">
+									<a href={{link}}>{{title}}</a>
+								</li>
+							{% endif %}
+						{% endfor %}
+					</ul>
+				</div><!-- /.navbar-collapse -->
+			</div><!-- /.container-fluid -->
+		</nav>
+
+		<!-- Page content -->
+		<h1 class="text-center">Incidents</h1>
+
+		  	{% with messages = get_flashed_messages() %}
+				{% if messages %}
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+							</div>
+							<div class="alert alert-danger col-xs-4 col-sm-4 col-md-4 col-lg-4">
+								{% for message in messages %}
+									<p>{{ message }}</p>
+								{% endfor %}
+							</div>
+							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+							</div>
+						</div>
+					</div>
+				{% endif %}
+			{% endwith %}
+
+		<!-- Multiple columns -->
+		<div class="container-fluid">
+
+			<div class="row">
+
+				<!-- LEFT -->
+				<div class="col-xs-8 col-sm-8 col-md-6 col-lg-6">
+
+					<h3 class="text-center">Create New</h3>
+
+					<!-- Incident creation form -->
+					<form method="post">
+						<!-- Buttons -->
+						<div class="text-center" align="center">
+							<input name="action" class="btn btn btn-success center-block" type="submit" value="Create">
+						</div>
+
+						<h6 class="text-center">Note: All blank fields will be sent as empty strings.</h6>
+
+						<!-- Scene ID -->
+						<div class="form-group row">
+							<label for="text-input-sceneid" class="col-xs-2 col-form-label">Identification</label>
+							<div class="col-xs-10">
+								<input name="data-sceneid" class="form-control" type="text" placeholder="Incident ID" id="text-input-sceneid">
+						  	</div>
+						</div>
+
+						<!-- Title -->
+						<div class="form-group row">
+							<label for="text-input-title" class="col-xs-2 col-form-label">Title</label>
+							<div class="col-xs-10">
+								<input name="data-title" class="form-control" type="text" placeholder="e.g. 'Structure Fire'" id="text-input-title">
+						  	</div>
+						</div>
+
+						<!-- Organizations -->
+						<div class="form-group row">
+							<label for="button-input-organizations" class="col-xs-2 col-form-label">Organizations</label>
+							<div class="col-xs-10" id="button-input-organizations" >
+
+								<!-- FIRE -->
+								<label class="form-check-inline">
+									<input name="check-organization" class="form-check-input text-warning" type="checkbox" id="checkboxFire" value="FIRE"> Fire
+								</label>
+
+								<!-- EMS -->
+								<label class="form-check-inline">
+									<input name="check-organization" class="form-check-input" type="checkbox" id="checkboxEms" value="EMS"> EMS
+								</label>
+
+								<!-- POLICE -->
+								<label class="form-check-inline">
+									<input name="check-organization" class="form-check-input" type="checkbox" id="checkboxPolice" value="POLICE"> Police
+								</label>
+						  	</div>
+						</div>
+
+						<!-- Description -->
+						<div class="form-group row">
+							<label for="text-input-description" class="col-xs-2 col-form-label">Description</label>
+							<div class="col-xs-10">
+								<textarea name="data-description" class="form-control" id="text-input-description" rows="3" placeholder="Detailed description of incident"></textarea>
+						  	</div>
+						</div>
+
+						<!-- Status -->
+						<div class="form-group row">
+							<label for="button-input-status" class="col-xs-2 col-form-label">Status</label>
+							<div class="col-xs-10" id="button-input-status" >
+
+								<!-- Active -->
+								<label class="form-check-inline">
+									<input name="check-status" class="form-check-input text-warning" type="radio" id="checkboxActive" value="True"> Active
+								</label>
+
+								<!-- Inactive -->
+								<label class="form-check-inline">
+									{# Note that empty string will evaluate to False when converting to boolean #}
+									<input name="check-status" class="form-check-input" type="radio" id="checkboxInactive" value=""> Inactive
+								</label>
+						  	</div>
+						</div>
+
+						<!-- Address -->
+						<div class="form-group row">
+							<label for="text-input-address" class="col-xs-2 col-form-label">Address</label>
+							<div class="col-xs-10">
+								<input name="data-address" class="form-control" type="text" placeholder="e.g. '42 Wallaby Way, Sydney'" id="text-input-address">
+						  	</div>
+						</div>
+
+						<!-- Latitude -->
+						<div class="form-group row">
+							<label for="text-input-latitude" class="col-xs-2 col-form-label">Latitude</label>
+							<div class="col-xs-10">
+								<input name="data-latitude" class="form-control" type="text" placeholder="e.g. '37.227742'" id="text-input-latitude">
+						  	</div>
+						</div>
+
+						<!-- Longitude -->
+						<div class="form-group row">
+							<label for="text-input-longitude" class="col-xs-2 col-form-label">Longitude</label>
+							<div class="col-xs-10">
+								<input name="data-longitude" class="form-control" type="text" placeholder="e.g. '-80.421978'" id="text-input-longitude">
+						  	</div>
+						</div>
+
+						<!-- Time -->
+						<div class="form-group row">
+							<label for="text-input-time" class="col-xs-2 col-form-label">Time</label>
+							<div class="col-xs-10">
+								<input name="data-time" class="form-control" type="text" placeholder="Incident start time in 24-hour format (e.g. 14:30)" id="text-input-time">
+						  	</div>
+						</div>
+
+					</form>
+
+				</div>
+
+				<!-- RIGHT -->
+				<div class="col-xs-4 col-sm-4 col-md-6 col-lg-6">
+
+					<h3 class="text-center">Available</h3>
+
+					<!-- Buttons -->
+					<div class="text-center" align="center">
+						<form method="post" align="center" style="min-height:100%">
+							<input name="action" class="btn btn-primary center-block" type="submit" value="Refresh">
+						</form>
+					</div>
+
+					<h6 class="text-center">All available incidents will appear here</h6>
+
+					<div style="height: 550px;overflow: auto;">
+
+						{# List of Incidents #}
+						{% for incident in INCIDENTS %}
+
+							{# Active incident #}
+							{% if incident.active %}
+								<div class="panel panel-success">
+
+							{# Inactive incident #}
+							{% else %}
+								<div class="panel panel-danger">
+
+							{% endif %}
+									<div class="panel-heading">
+										<h4 class="list-group-item-heading">{{incident.title}}</h4>
+									</div>
+									<div class="panel-body">
+										<ul class="list-inline">
+											{% for org in incident.organizations %}
+												{% if org.lower() == "fire" %}
+													<img src="{{ url_for('static', filename='images/ic_fire.png') }}" class="img-fluid" alt="Responsive image" style="height:18px;width:15px">
+												{% elif org.lower() == "ems" %}
+													<img src="{{ url_for('static', filename='images/ic_ems.png') }}" class="img-fluid" alt="Responsive image" style="height:20px;width:20px">
+												{% elif org.lower() == "police" %}
+													<img src="{{ url_for('static', filename='images/ic_police.png') }}" class="img-fluid" alt="Responsive image" style="height:17px;width:17px">
+												{% endif %}
+											{% endfor %} 
+										</ul>
+										<p class="list-group-item-text">{{incident.address}} <a href="http://maps.google.com/maps?z=12&t=m&q=loc:{{incident.latitude}}+{{incident.longitude}}" target="_blank">({{incident.latitude}}, {{incident.longitude}})</a></p>
+										<p></p>
+										<p class="list-group-item-text">{{incident.description}}</p>
+									</div>
+								</div>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+	</body>
+
+{% endblock %}
