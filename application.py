@@ -65,27 +65,69 @@ def incidents():
 			if request.form['data-sceneid'] == "":
 				flash('WARNING: No incident ID specified.')
 
+			elif request.form['data-title'] == "":
+				flash('WARNING: No incident title specified.')
+
+			elif len(request.form.getlist('check-organization')) == 0:
+				flash('WARNING: No incident organizations specified.')
+
+			elif request.form['data-description'] == "":
+				flash('WARNING: No incident description specified.')
+
+			elif request.form.get('check-status') == None:
+				flash('WARNING: No incident status specified.')
+
+			elif request.form['data-address'] == "":
+				flash('WARNING: No incident address specified.')
+
+			elif request.form['data-latitude'] == "":
+				flash('WARNING: No incident latitude specified.')
+
+			elif request.form['data-longitude'] == "":
+				flash('WARNING: No incident longitude specified.')
+
+			elif request.form['data-time'] == "":
+				flash('WARNING: No incident time specified.')
+
 			# All required fields are valid.
 			else:
-				dynamo.tables[config.get("dynamodb","aws_table_incidents")].put_item(
-					data={
-					"sceneId" : request.form['data-sceneid'],
-					"address" : request.form['data-address'],
-					"active" : True,
-					"assigned_organizations" : request.form.getlist('check'),
-					"description" : request.form['data-description'],
-					"latitude" : request.form['data-latitude'],
-					"longitude" : request.form['data-longitude'],
-					"time" : request.form['data-time'],
-					"title" : request.form['data-title'],
-					}
-					)
 
-				# Small delay to allow the database to be updated.
-				time.sleep(0.05)
+				# Configure incident dynamo table to use boolean values.
+				dynamo.tables[config.get("dynamodb","aws_table_incidents")].use_boolean()
 
-				# Get updated incident list.
-				updateIncidents()
+				# Attempt to add a new item to the database.
+				try:
+
+					# Add new entry to the database.
+					dynamo.tables[config.get("dynamodb","aws_table_incidents")].put_item(
+						data={
+						"sceneId" : request.form['data-sceneid'],
+						"address" : request.form['data-address'],
+						"active" : bool(request.form['check-status']),
+						"assigned_organizations" : request.form.getlist('check-organization'),
+						"description" : request.form['data-description'],
+						"latitude" : request.form['data-latitude'],
+						"longitude" : request.form['data-longitude'],
+						"time" : request.form['data-time'],
+						"title" : request.form['data-title'],
+						}
+						)
+
+					# Small delay to allow the database to be updated.
+					time.sleep(0.05)
+
+					# Get updated incident list.
+					updateIncidents()
+
+				# Database insertion failed because another incident with the same ID already exists.
+				except Exception:
+					flash("ERROR: An incident with ID '" + request.form['data-sceneid'] +"' already exists.")
+
+	# Client requesting information from server.
+	if request.method == "GET":
+
+		# Get updated incident list.
+		updateIncidents()
 
 	# Render the incidents HTML page.
 	return render_template('incidents.html', NAV=nav["header"], INCIDENTS=INCIDENTS)
@@ -101,6 +143,9 @@ def updateIncidents():
 	# Clear the list (TODO: don't clear list, instead keep references)
 	INCIDENTS = []
 
+	# Configure incident dynamo table to use boolean values.
+	dynamo.tables[config.get("dynamodb","aws_table_incidents")].use_boolean()
+
 	# Obtain boto-style dictionary of incidents.
 	incidents = dynamo.tables[config.get("dynamodb","aws_table_incidents")].scan()
 
@@ -108,7 +153,8 @@ def updateIncidents():
 	for item in incidents:
 
 		# Create new incident object.
-		incident = Incident(item['sceneId'],item['description'],item['address'],item['latitude'],item['longitude'],item['time'],item['title'],item['assigned_organizations'])
+		incident = Incident(item['sceneId'],item['description'],item['address'],item['active'],item['latitude'],item['longitude'],item['time'],item['title'],item['assigned_organizations'])
+		print "incident status: " + str(incident.active)
 
 		# Append incident object to the global list of incidents.
 		INCIDENTS.append(incident)
